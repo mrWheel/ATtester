@@ -8,8 +8,6 @@
 */
 
 
-uint8_t Rv, Ra, Lv, La, Al, Ar;
-
 //========================================================================
 void postRestApiData() 
 {
@@ -21,18 +19,8 @@ void postRestApiData()
 
   snprintf(replyBuffer, sizeof(replyBuffer), "AT+HTTPPARA=\"URL\",\"%s\"", _POSTURL_);
 
-  
-  Rv+=random(1,200); 
-  Ra+=random(1,200);  
-  Lv+=random(1,200); 
-  La+=random(1,200); 
-  Al+=random(1,200);
-  Ar+=random(1,200);
-
   snprintf(myData, sizeof(myData), "{\"simple\":\"json\"}");
 
-//  snprintf(myData, sizeof(myData), "{\"Rv\":%d,\"Ra\":%d,\"Lv\":%d,\"La\":%d,\"Al\":%d,\"Ar\":%d}"
-//                                  , Rv, Ra, Lv, La, Al, Ar);
   uint8_t myDataLen = strlen(myData);
   
   //sendAtCmnd("AT+SAPBR?", 1000);
@@ -78,11 +66,11 @@ void postRestApiData()
                 Serial.print("---> [");
                 Serial.print(myData);
                 Serial.println("]");
-                //delay(500);
                 handleInFromSim(1000);
                 break;
                 
-      case  9:  rc = sendAtCmnd("AT+HTTPACTION=1", ",200,", ",40", 5000); // 0 = get, 1 = post
+      case  9:  delay(1000);
+                rc = sendAtCmnd("AT+HTTPACTION=1", ",200,", ",40", 5000); // 0 = get, 1 = post
                 if (rc == 0) { postState = 90; }
                 break;
 

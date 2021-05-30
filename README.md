@@ -108,10 +108,10 @@ OK
     "X-Amzn-Trace-Id": "Root=1-60b3627f-40a256736a4e20064daaeecf"
   },
   "json": {
-   "simle" "jso"
+   "simple" "json"
   }
-  "rigin: "18197.8.88"
-  "ul": "htt://htpbin.og/pos"
+  "origin: "18.197.48.88",
+  "url": "http://httpbin.org/post"
 }
 OK (true state)
 ---> AT+HTTPTERM
@@ -126,33 +126,33 @@ specific needs:
 ## sendAtCmnd(&lt;ATcommand&gt;) ##
 This function sends the string `ATcommand` to the modem and waits for a maximum of
 1000ms for a response.
-If the modem sends back the string "OK" the function exits with a returncode "1".
-If the modem sends back the string "ERROR" the function exits with a returncode "-1".
+If the modem sends back the string "OK" the function exits immediately with a returncode "1".
+If the modem sends back the string "ERROR" the function exits immediately with a returncode "-1".
 If the modem does not send a response the function times-out (returncode "0").
 
 ## sendAtCmnd(&lt;ATcommand&gt;, &lt;waitTime&gt;) ##
 This function sends the string `ATcommand` to the modem and waits for a maximum of
 `waitTime`ms for a response.
-If the modem sends back the string "OK" the function exits with a returncode "1".
-If the modem sends back the string "ERROR" the function exits with a returncode "-1".
+If the modem sends back the string "OK" the function exits immediately with a returncode "1".
+If the modem sends back the string "ERROR" the function exits immediately with a returncode "-1".
 If the modem does not send a response the function times-out (returncode "0").
 
 ## sendAtCmnd(&lt;ATcommand&gt;, &lt;OKstring&gt;, &lt;ERRORstring&gt;, &lt;waitTime&gt;) ##
 This function sends the string `ATcommand` to the modem and waits for a maximum of
 `waitTime`ms for a response.
-If the modem sends back the string `OKstring` the function exits with a returncode "1".
-If the modem sends back the string `ERRORstring` the function exits with a returncode "-1".
+If the modem sends back the string `OKstring` the function exits immediately with a returncode "1".
+If the modem sends back the string `ERRORstring` the function exits immediately with a returncode "-1".
 If the modem does not send a response the function times-out (returncode "0").
 
 ## handleInFromSim() ##
-This function checks for chars send by the modem and prints them.
+This function waits 50ms for chars send by the modem and prints them.
 
 ## handleInFromSim(&lt;waitTime&gt;) ##
 This function waits `waitTime`ms for chars send by the modem and prints them.
 
 ## handleInFromSim(&lt;OKstring&gt;, &lt;ERRORstring&gt;, &lt;waitTime&gt;) ##
 This function checks `waitTime`ms for chars send by the modem and prints them.
-if the modem sends the `OKstring` the function exits with returncode "1".
-if the modem sends the `ERRORstring` the function exits with returncode "-1".
+if the modem sends the `OKstring` the function exits immediately with returncode "1".
+if the modem sends the `ERRORstring` the function exits immediately with returncode "-1".
 If neither is received before `waitTime`ms the function exits with returncode "0".
 

@@ -17,16 +17,18 @@ void postRestApiData()
 
   Serial.println(F("postRestAPI .."));
 
+  //getRestApiData();
+  
   snprintf(replyBuffer, sizeof(replyBuffer), "AT+HTTPPARA=\"URL\",\"%s\"", _POSTURL_);
 
   snprintf(myData, sizeof(myData), "{\"simple\":\"json\"}");
 
   uint8_t myDataLen = strlen(myData);
   
-  //sendAtCmnd("AT+SAPBR?", 1000);
-  //sendAtCmnd("AT+SAPBR=1,1", 1000);
-  //sendAtCmnd("AT+HTTPTERM", 1000);
-  sendAtCmnd("AT+CSQ", "+CSQ:", "OK", 2000);
+  //-- not sure of the next commands are necessary
+  sendAtCmnd("AT+HTTPREAD=0,500", 1000);
+  sendAtCmnd("AT+SAPBR=1,1", 1000);
+  sendAtCmnd("AT+HTTPTERM", 1000);
  
   while ( (postState < 90) && !errorState)
   {
@@ -34,47 +36,55 @@ void postRestApiData()
     postState++;
     switch(postState)
     {
-      case  1:  //sendAtCmnd("AT+SAPBR=1,1", 2000);
-                break;
-                
-      case  2:  //sendAtCmnd("AT+HTTPTERM", 5000);
-                break;
-
-      case  3:  rc = sendAtCmnd("AT+HTTPINIT", 5000);
+      case  1:  rc = sendAtCmnd("AT+HTTPINIT", 5000);
                 if (rc == 0) postState = 90;
                 break;
 
-      case  4:  rc = sendAtCmnd(replyBuffer, 2000);
+      case  2:  rc = sendAtCmnd(replyBuffer, 2000);
                 break;
 
-      case  5:  rc = sendAtCmnd("AT+HTTPPARA=\"CID\",1", 1000);
+      case  3:  rc = sendAtCmnd("AT+HTTPPARA=\"CID\",1", 1000);
                 break;
                 
-      case  6:  rc = sendAtCmnd("AT+HTTPPARA=\"CONTENT\",\"application/json\"", 1000);
-    //case  6:  rc = sendAtCmnd("AT+HTTPPARA=\"CONTENT\",\"plain/text\"", 1000);
+      case  4:  rc = sendAtCmnd("AT+HTTPPARA=\"CONTENT\",\"application/json\"", 1000);
+    //case  4:  rc = sendAtCmnd("AT+HTTPPARA=\"CONTENT\",\"plain/text\"", 1000);
                 break;
 
-      case  7:  modemSS.print("AT+HTTPDATA=");
+      case  5:  modemSS.print("AT+HTTPDATA=");
                 modemSS.print(myDataLen);
                 modemSS.println(",10000");
-                rc = handleInFromSim("DOWNLOAD", "", 2000);  // wait for "DOWNLOAD"
+                rc = handleInFromSim("DOWNLOAD", "", 2000, true);  // wait for "DOWNLOAD"
                 break;
 
-      case  8:  modemSS.println(myData);
-                //modemSS.flush();
+      case  6:  modemSS.println(myData);
                 modemSS.print("\r\n");
                 Serial.print("---> [");
                 Serial.print(myData);
                 Serial.println("]");
-                handleInFromSim(1000);
-                break;
-                
-      case  9:  delay(1000);
-                rc = sendAtCmnd("AT+HTTPACTION=1", ",200,", ",40", 5000); // 0 = get, 1 = post
+                rc = handleInFromSim("OK", "ERROR", 5000, true);
                 if (rc == 0) { postState = 90; }
                 break;
+                
+      case  7:  delay(100);
+                rc = sendAtCmnd("AT+HTTPACTION=1", ",200,", ",40", 5000, true); // 0 = get, 1 = post
+                if (rc == 0) { postState = 90; }
+                if (rc == 1)
+                {
+                  Serial.println();
+                  Serial.println(F("============================================================"));
+                  Serial.print(F("Data is send to and received by "));
+                  Serial.println(_POSTURL_);
+                  Serial.println(F("============================================================"));
+                }
+                break;
 
-      case 10:  rc = sendAtCmnd("AT+HTTPREAD=0,500", "OK", "ERROR", 5000);
+      case  8:  rc = sendAtCmnd("AT+HTTPREAD=0,500", "+HTTPREAD:", "ERROR", 5000);
+                lastReplyLen = 0;
+                handleInFromSim("OK", "ERROR", 1000, true);
+                Serial.print(F("\r\nlastReply["));
+                //-- only the first MAX_REPLY_BUFF chars are saved in lastReply
+                Serial.print(lastReply);
+                Serial.println(F("]"));
                 break;
                 
       default:  postState = 99;
@@ -83,7 +93,6 @@ void postRestApiData()
     
     if (rc != 9)
     {
-      showReturnCode(rc);
       if (rc == -1) errorState = true;
       handleInFromSim(100);
     }

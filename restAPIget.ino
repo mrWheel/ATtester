@@ -15,8 +15,11 @@ void getRestApiData()
 
   Serial.println(F("getRestAPI .."));
   snprintf(replyBuffer, sizeof(replyBuffer), "AT+HTTPPARA=\"URL\",\"%s\"", _GETURL_);
-  
-  sendAtCmnd("AT+CSQ", "+CSQ:", "OK", 2000);
+
+  //-- not sure of the next commands are necessary
+  sendAtCmnd("AT+HTTPREAD=0,500", 1000);
+  sendAtCmnd("AT+SAPBR=1,1", 1000);
+  sendAtCmnd("AT+HTTPTERM", 1000);              
 
   while ( (postState < 90) && !errorState)
   {
@@ -24,22 +27,16 @@ void getRestApiData()
     postState++;
     switch(postState)
     {
-      case  1:  sendAtCmnd("AT+SAPBR=1,1", 2000);
-                break;
-                
-      case  2:  sendAtCmnd("AT+HTTPTERM", 5000);
-                break;
-                
-      case  3:  rc = sendAtCmnd("AT+HTTPINIT", 2000);
+      case  1:  rc = sendAtCmnd("AT+HTTPINIT", 2000);
                 break;
 
-      case  4:  rc = sendAtCmnd(replyBuffer, 2000);
+      case  2:  rc = sendAtCmnd(replyBuffer, 2000);
                 break;
 
-      case  5:  rc = sendAtCmnd("AT+HTTPPARA=\"CID\",1", 1000);
+      case  3:  rc = sendAtCmnd("AT+HTTPPARA=\"CID\",1", 1000);
                 break;
 
-      case  6:  rc = sendAtCmnd("AT+HTTPACTION=0", ",200,", ",60", 3000); // 0 = get, 1 = post
+      case  4:  rc = sendAtCmnd("AT+HTTPACTION=0", ",200,", ",60", 3000); // 0 = get, 1 = post
                 //-- +HTTPACTION:0,601,0
                 //--  An AT response code (601) for HTTP session start indicates that 
                 //--  there is a network error. Make sure that the PDP context is setup
@@ -48,8 +45,13 @@ void getRestApiData()
                 //--  Above HTTP GET request is sucessful and it returned 4 bytes.
                 break;
 
-      case  7:  rc = sendAtCmnd("AT+HTTPREAD=0,500", "OK", "ERROR", 10000);
-                handleInFromSim(500);
+      case  5:  rc = sendAtCmnd("AT+HTTPREAD=0,500", "+HTTPREAD:", "ERROR", 5000);
+                lastReplyLen = 0;
+                handleInFromSim("OK", "ERROR", 1000, true);
+                Serial.print(F("\r\nlastReply["));
+                //-- only the first MAX_REPLY_BUFF chars are saved and displayed
+                Serial.print(lastReply);
+                Serial.println(F("]"));
                 break;
 
       default:  postState = 99;
@@ -58,7 +60,6 @@ void getRestApiData()
     
     if (rc != 9)
     {
-      showReturnCode(rc);
       if (rc == -1) errorState = true;
       handleInFromSim(100);
     }
@@ -70,8 +71,6 @@ void getRestApiData()
   
   if (errorState) Serial.println(F("\r\n==>> Error(s)..\r\n"));    
   else            Serial.println(F("\r\n==>> Done..\r\n"));
-    
-
     
 } //  getRestApiData()
 

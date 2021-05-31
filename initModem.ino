@@ -12,48 +12,22 @@ void initModem()
   rc = sendAtCmnd("ATZ", 1000);
   rc = sendAtCmnd("ATI", 1000); 
   rc = sendAtCmnd("ATE1", 5000); 
-  showReturnCode(rc);
-// test CPIN for READY
-  rc = sendAtCmnd("AT+CPIN?", "READY", "ERROR", 2000);
-  showReturnCode(rc);
+  //-- test CPIN for READY
+  rc = sendAtCmnd("AT+CPIN?", "READY", "ERROR", 2000, true);
   if (rc != 1)
   {
-    rc = sendAtCmnd("AT+CPIN=\"0000\"", "READY", "ERROR", 2000);
-    showReturnCode(rc);
+    rc = sendAtCmnd("AT+CPIN=\"0000\"", "READY", "ERROR", 2000, true);
   }
   rc = sendAtCmnd("AT+CFUN=1", 2000);
-  //rc = sendAtCmnd("AT+CGDCONT=1,\"IP\",\"internet\"", "OK", "ERROR", 20000);
+  //-- this depends on your SIM card ------vvvvvvvvvvvvvvv
   rc = sendAtCmnd("AT+CGDCONT=1, \"IP\", \"iot.tmobile.nl\"", 20000);  
   rc = sendAtCmnd("AT+CGDCONT?", 5000);
   rc = sendAtCmnd("AT+CMNB=1", 2000);
   rc = sendAtCmnd("AT+CNMP=2", 2000);
   rc = sendAtCmnd("AT+CGATT=1", 2000);
-  //rc = sendAtCmnd("AT+CIFSR?", 2000); // get IP address
-  //rc = sendAtCmnd("AT+SAPBR=?", 2000);
-  //rc = sendAtCmnd("AT+SAPBR=1,1,\"APN\",\"iot.tmobile.nl\"", 2000);
   rc = sendAtCmnd("AT+CNTPCID=1", 2000);
-  //rc = sendAtCmnd("AT+CNTP=\"pool.ntp.org\",2,1", 2000);
-  //rc = sendAtCmnd("AT+CCLK?", 5000);
-  //rc = sendAtCmnd("AT+CLTS=0", 1000);
-  
-  //rc = sendAtCmnd("AT+GSN", "OK", "ERROR", 20000);
-  //delay(2000);
-
-  /***
-  rc = sendAtCmnd("AT+CSTT?", 20000);
-  showReturnCode(rc);
-  if (rc != 1)
-  {
-    rc = sendAtCmnd("AT+CSTT=\"internet\"", "OK", "ERROR", 5000);
-    showReturnCode(rc);
-  }
-  ***/
   rc = sendAtCmnd("AT+GCAP", 5000);
   rc = sendAtCmnd("AT+CSQ", 5000);
-  //rc = sendAtCmnd("AT+CBANDCFG?", 5000);
-  //rc = sendAtCmnd("AT+COPS?", 5000);
-  //rc = sendAtCmnd("AT+CGREG?", 5000);
-  //rc = sendAtCmnd("AT+CGATT?", 5000);
   rc = sendAtCmnd("AT+CGPADDR=1", 5000);
 
 } // initModem();

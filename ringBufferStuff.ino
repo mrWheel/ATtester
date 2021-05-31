@@ -28,16 +28,16 @@ void addChar2Ring(char c)
 bool isStringInBuff(const char *testString) 
 {
   int8_t  sLen = strlen(testString);
-  int8_t  bPos = ringLastIn-sLen;  // last char must be '\r'
+  int8_t  bPos = ringLastIn-sLen;  
 
   if (bPos<0) bPos = MAX_RING_SIZE+bPos;
   if (sLen >= MAX_RING_SIZE) return false;
 
-  //                ringLastIn---|
-  //              0  1  2  3  4  V  6  7  8 
-  // ringBuffer: [a][b][c][d][O][K][g][h][i][0]
-  //                       0  1  2  3
-  // testString           [x][O][K][0]
+  //--                ringLastIn---|
+  //--              0  1  2  3  4  V  6  7  8 
+  //-- ringBuffer: [a][b][c][d][O][K][g][h][i][0]
+  //--                       0  1  2  3
+  //-- testString           [x][O][K][0]
   for (int t=0; t<sLen;t++)
   {
     if (toupper(ringBuffer[(bPos+t)%MAX_RING_SIZE]) != toupper(testString[t]))

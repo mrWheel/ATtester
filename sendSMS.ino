@@ -11,23 +11,16 @@
 
 void sendSMS()
 {
-  rc = sendAtCmnd("AT+CPMS=\"SM\",\"SM\",\"SM\"", "OK", "ERROR", 10000);
-  showReturnCode(rc);
-  rc = sendAtCmnd("AT+CMGF=1", "OK", "ERROR", 10000);
-  showReturnCode(rc);
-  rc = sendAtCmnd("AT+CMGF?", "OK", "ERROR", 10000); 
-  showReturnCode(rc);
-  rc = sendAtCmnd("AT+CPMS=\"Hello World!\"", "OK", "ERROR", 10000);
-  showReturnCode(rc);
+  rc = sendAtCmnd("AT+CPMS=\"SM\",\"SM\",\"SM\"", "OK", "ERROR", 10000, true);
+  rc = sendAtCmnd("AT+CMGF=1", "OK", "ERROR", 10000, true);
+  rc = sendAtCmnd("AT+CMGF?", "OK", "ERROR", 10000, true); 
+  rc = sendAtCmnd("AT+CPMS=\"Hello World!\"", "OK", "ERROR", 10000, true);
   if (rc != 1)  return;
-  rc = sendAtCmnd("AT+CMGW=1,\"mem1\"", "OK", "ERROR", 10000);    
-  showReturnCode(rc);
+  rc = sendAtCmnd("AT+CMGW=1,\"mem1\"", "OK", "ERROR", 10000, true);    
   if (rc != 1)  return;
-  rc = sendAtCmnd("AT+CMGS=\"0653123456\"", "OK", "ERROR", 10000);  
-  showReturnCode(rc);
+  rc = sendAtCmnd("AT+CMGS=\"0653123456\"", "OK", "ERROR", 10000, true);  
   if (rc != 1)  return;
-  rc = sendAtCmnd("AT+CMGF?", "OK", "ERROR", 10000);  
-  showReturnCode(rc);
+  rc = sendAtCmnd("AT+CMGF?", "OK", "ERROR", 10000, true);  
 
 } //  sendSMS();
 

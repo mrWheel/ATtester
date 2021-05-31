@@ -1,6 +1,6 @@
 /*
 ***************************************************************************  
-**  Program  : ATtester.h (modem tester header file)
+**  Program  : main.h (modem tester header file)
 **  Copyright (c) 2021 Willem Aandewiel 
 **
 **  TERMS OF USE: MIT License. See bottom of file.                                                            
@@ -13,20 +13,19 @@
 #define _POSTURL_     "http://httpbin.org/post"
 
 //-- minimal the longest AT command+params
-#define MAX_REPLY_BUFF  100
-#define MAX_TRUE_BUFF  100
+#define MAX_REPLY_BUFF  120
+#define MAX_RING_SIZE 15
 
 //-- this is a large buffer for replies
 char    replyBuffer[MAX_REPLY_BUFF+1];
 char    lastReply[MAX_REPLY_BUFF+1];
-char    trueBuffer[MAX_TRUE_BUFF+1];
+//-- this is a small buffer for reply strings
+char    ringBuffer[MAX_RING_SIZE];
+uint8_t ringLastIn, ringNextPointer = 0;
+uint8_t lastReplyLen = 0;
 
 int8_t  rc;    //-- global replyCode for sendAtCmnd()
 bool    skipNewLine = false;
-int8_t  sendAtCmnd(const char*, const char*, const char*, uint32_t); 
-int8_t  sendAtCmnd(const char*, uint32_t) ;
-void    showReturnCode(int8_t);
-void    resetModem();
 
 
 // AltSoftSerial always uses these pins:
@@ -55,11 +54,6 @@ bool      isTrueCond  = false;
 SoftwareSerial modemSS = SoftwareSerial(MODEM_TX, MODEM_RX);
 
 bool    lastStatus;
-
-
-#define MAX_RING_SIZE 15
-char    ringBuffer[MAX_RING_SIZE];
-uint8_t ringLastIn, ringNextPointer = 0;
 
 
 /***************************************************************************
